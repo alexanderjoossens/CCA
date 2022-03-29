@@ -64,8 +64,8 @@ def create_avg_data_arrays(file):
     for i in range(len(run1[0])):
         x_data.append((run1[0][i] + run2[0][i] + run3[0][i]) / 3)
         y_data.append((run1[1][i] + run2[1][i] + run3[1][i]) / 3)
-        x_error.append(math.sqrt((run1[0][i]-x_data[-1])**2 + (run2[0][i]-x_data[-1])**2 + (run2[0][i]-x_data[-1])**2))
-        y_error.append(math.sqrt((run1[1][i]-y_data[-1])**2 + (run2[1][i]-y_data[-1])**2 + (run2[1][i]-y_data[-1])**2))
+        x_error.append(math.sqrt(((run1[0][i]-x_data[-1])**2 + (run2[0][i]-x_data[-1])**2 + (run2[0][i]-x_data[-1])**2))/2)
+        y_error.append(math.sqrt(((run1[1][i]-y_data[-1])**2 + (run2[1][i]-y_data[-1])**2 + (run2[1][i]-y_data[-1])**2))/2)
     return (x_data, y_data, x_error, y_error)
 
 # get data from raw data for each benchmark
@@ -98,6 +98,10 @@ plt.errorbar(x1[3], y1[3], xerr=x1_err[3], yerr=y1_err[3], label="ibench-l1i")
 plt.errorbar(x1[4], y1[4], xerr=x1_err[4], yerr=y1_err[4], label="ibench-l2")
 plt.errorbar(x1[5], y1[5], xerr=x1_err[5], yerr=y1_err[5], label="ibench-llc")
 plt.errorbar(x1[6], y1[6], xerr=x1_err[6], yerr=y1_err[6], label="ibench-membw")
+
+# exercise 1d)
+#plt.axhline(y = 1500, color = 'r', linestyle = '-')
+#plt.axvline(x = 65000, color = 'r', linestyle = '-')
 
 plt.xlabel("Queries per second (QPS)\n Plotted using the average measurements of three runs")
 plt.ylabel("95th percentile latency")

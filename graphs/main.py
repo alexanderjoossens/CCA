@@ -10,9 +10,7 @@ errorbars using the parameters ``uplims``, ``lolims`` of `~.pyplot.errorbar`.
 Alternatively, you can use 2xN values to draw errorbars in only one direction.
 """
 
-from cProfile import label
 import math
-from email.contentmanager import raw_data_manager
 import numpy as np
 import matplotlib.pyplot as plt
 import re
@@ -63,9 +61,9 @@ def create_avg_data_arrays(file):
     y_error = []
     for i in range(len(run1[0])):
         x_data.append((run1[0][i] + run2[0][i] + run3[0][i]) / 3)
-        y_data.append((run1[1][i] + run2[1][i] + run3[1][i]) / 3)
+        y_data.append((run1[1][i] + run2[1][i] + run3[1][i]) / 3000)
         x_error.append(math.sqrt(((run1[0][i]-x_data[-1])**2 + (run2[0][i]-x_data[-1])**2 + (run2[0][i]-x_data[-1])**2))/2)
-        y_error.append(math.sqrt(((run1[1][i]-y_data[-1])**2 + (run2[1][i]-y_data[-1])**2 + (run2[1][i]-y_data[-1])**2))/2)
+        y_error.append(math.sqrt(((run1[1][i]/1000-y_data[-1])**2 + (run2[1][i]/1000-y_data[-1])**2 + (run2[1][i]/1000-y_data[-1])**2))/2)
     return (x_data, y_data, x_error, y_error)
 
 # get data from raw data for each benchmark
@@ -103,10 +101,10 @@ plt.errorbar(x1[6], y1[6], xerr=x1_err[6], yerr=y1_err[6], label="ibench-membw")
 #plt.axhline(y = 1500, color = 'r', linestyle = '-')
 #plt.axvline(x = 65000, color = 'r', linestyle = '-')
 
-plt.xlabel("Queries per second (QPS)\n Plotted using the average measurements of three runs")
-plt.ylabel("95th percentile latency")
+plt.xlabel("Queries per second (QPS)")
+plt.ylabel("95th percentile latency [ms]")
 plt.xlim(0, 80000)
-plt.ylim(0, 10000)
+plt.ylim(0, 10)
 plt.title("Performance for different iBench sources of interference")
 plt.legend(loc="upper right")
 

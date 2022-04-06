@@ -61,6 +61,7 @@ plt.ylim(0, 10)
 plt.title("Speedup of multiple threads for different workloads")
 plt.legend(loc="upper right")
 
+print(y)
 # Display graph
 
 pylab.savefig('plot_part2.png')

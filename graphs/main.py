@@ -98,8 +98,8 @@ plt.errorbar(x1[5], y1[5], xerr=x1_err[5], yerr=y1_err[5], label="ibench-llc", c
 plt.errorbar(x1[6], y1[6], xerr=x1_err[6], yerr=y1_err[6], label="ibench-membw", capsize=2)
 
 # exercise 1d)
-#plt.axhline(y = 1.5, color = 'r', linestyle = '-')
-#plt.axvline(x = 65000, color = 'r', linestyle = '-')
+plt.axhline(y = 1.5, color = 'r', linestyle = '-')
+plt.axvline(x = 65000, color = 'r', linestyle = '-')
 
 plt.xlabel("Queries per second [QPS]")
 plt.ylabel("95th percentile latency [ms]")
@@ -108,6 +108,7 @@ plt.xticks([0, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000], ['0', '1
 plt.ylim(0, 10)
 plt.title("Performance for different iBench sources of interference")
 plt.legend(loc="upper right")
+plt.grid()
 
 # Display graph
 

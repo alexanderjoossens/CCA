@@ -15,7 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import re
 
-from matplotlib import pylab
+from matplotlib import markers, pylab
 
 
 def comma(inputs):
@@ -43,12 +43,12 @@ for i in range(len(y)):
 # Plot error bar
 plt.figure(figsize=(15, 10))
 
-plt.plot(x, y[0], label="blackscholes")
-plt.plot(x, y[1], label="canneal")
-plt.plot(x, y[2], label="dedup")
-plt.plot(x, y[3], label="ferret")
+plt.plot(x, y[0], label="blackscholes", marker=".")
+plt.plot(x, y[1], label="canneal", marker=".")
+plt.plot(x, y[2], label="dedup", marker=".")
+plt.plot(x, y[3], label="ferret", marker=".")
 #plt.plot(x[0], y[4], label="fft")
-plt.plot(x, y[5], label="freqmine")
+plt.plot(x, y[5], label="freqmine", marker=".")
 
 # exercise 1d)
 #plt.axhline(y = 1500, color = 'r', linestyle = '-')
@@ -57,9 +57,10 @@ plt.plot(x, y[5], label="freqmine")
 plt.xlabel("Number of threads")
 plt.ylabel("Speedup")
 plt.xlim(0, 12)
-plt.ylim(0, 10)
+plt.ylim(0, 5)
 plt.title("Speedup of multiple threads for different workloads")
-plt.legend(loc="upper right")
+plt.legend(loc="upper left")
+plt.grid()
 
 print(y)
 # Display graph

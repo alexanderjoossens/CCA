@@ -1,15 +1,3 @@
-
-"""
-========================
-Errorbar limit selection
-========================
-
-Illustration of selectively drawing lower and/or upper limit symbols on
-errorbars using the parameters ``uplims``, ``lolims`` of `~.pyplot.errorbar`.
-
-Alternatively, you can use 2xN values to draw errorbars in only one direction.
-"""
-
 import math
 import numpy as np
 import matplotlib.pyplot as plt
@@ -75,7 +63,7 @@ def create_all_data_arrays(file):
 # Plot error bar
 plt.figure(figsize=(15, 10))
 
-plt.plot(x1[0], y1[0], label="Run 1")
+plt.plot(x1[0], y1[0], marker="o", label="Run 1")
 plt.axvline(x = 20, color = 'r', linestyle = '-')
 plt.text(20, .1, ' start of all parsec jobs')
 
@@ -99,7 +87,7 @@ plt.show()
 # Plot error bar
 plt.figure(figsize=(15, 10))
 
-plt.plot(x1[0], y1[0], label="Run 2")
+plt.plot(x1[0], y1[0], marker="o", label="Run 2")
 plt.axvline(x = 20, color = 'r', linestyle = '-')
 plt.text(20, .1, ' start of all parsec jobs')
 
@@ -125,7 +113,7 @@ plt.show()
 # Plot error bar
 plt.figure(figsize=(15, 10))
 
-plt.plot(x1[0], y1[0], label="Run 3")
+plt.plot(x1[0], y1[0], marker="o", label="Run 3")
 plt.axvline(x = 20, color = 'r', linestyle = '-')
 plt.text(20, .1, ' start of all parsec jobs')
 

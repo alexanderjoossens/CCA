@@ -42,7 +42,7 @@ def create_data_arrays_per_run(first_row, file):
     i = 0
     while (first_row[:4] == "read"):
         raw_row_array = comma(first_row[4:])
-        x_data.append(i)
+        x_data.append(i*20)
         i += 1
         y_data.append(raw_row_array[11])
         first_row = file.readline()
@@ -76,14 +76,14 @@ def create_all_data_arrays(file):
 plt.figure(figsize=(15, 10))
 
 plt.plot(x1[0], y1[0], label="Run 1")
-plt.axvline(x = 1, color = 'r', linestyle = '-')
-plt.text(1, .1, ' start of all parsec jobs')
+plt.axvline(x = 20, color = 'r', linestyle = '-')
+plt.text(20, .1, ' start of all parsec jobs')
 
 
-plt.xlabel("Timesteps")
+plt.xlabel("Time [s]")
 plt.ylabel("95th percentile latency [ms]")
-plt.xlim(0, 17)
-plt.xticks([0, 5, 10, 15], ['0', '5', '10', '15'])
+plt.xlim(0, 250)
+plt.xticks([0, 20, 50, 100, 150, 200, 250, 300], ['0', '20', '50', '100', '150', '200', '250', '300'])
 plt.ylim(0, 1)
 plt.title("95th percentile latency of memcached over time for the first run")
 plt.legend(loc="upper right")
@@ -100,16 +100,16 @@ plt.show()
 plt.figure(figsize=(15, 10))
 
 plt.plot(x1[0], y1[0], label="Run 2")
-plt.axvline(x = 1, color = 'r', linestyle = '-')
-plt.text(1, .1, ' start of all parsec jobs')
+plt.axvline(x = 20, color = 'r', linestyle = '-')
+plt.text(20, .1, ' start of all parsec jobs')
 
 
-plt.xlabel("Timesteps")
+plt.xlabel("Time [s]")
 plt.ylabel("95th percentile latency [ms]")
-plt.xlim(0, 17)
-plt.xticks([0, 5, 10, 15], ['0', '5', '10', '15'])
+plt.xlim(0, 250)
+plt.xticks([0, 20, 50, 100, 150, 200, 250, 300], ['0', '20', '50', '100', '150', '200', '250', '300'])
 plt.ylim(0, 1)
-plt.title("95th percentile latency of memcached over time for the first run")
+plt.title("95th percentile latency of memcached over time for the second run")
 plt.legend(loc="upper right")
 plt.grid()
 
@@ -126,16 +126,16 @@ plt.show()
 plt.figure(figsize=(15, 10))
 
 plt.plot(x1[0], y1[0], label="Run 3")
-plt.axvline(x = 1, color = 'r', linestyle = '-')
-plt.text(1, .1, ' start of all parsec jobs')
+plt.axvline(x = 20, color = 'r', linestyle = '-')
+plt.text(20, .1, ' start of all parsec jobs')
 
 
-plt.xlabel("Timesteps")
+plt.xlabel("Time [s]")
 plt.ylabel("95th percentile latency [ms]")
-plt.xlim(0, 17)
-plt.xticks([0, 5, 10, 15], ['0', '5', '10', '15'])
+plt.xlim(0, 250)
+plt.xticks([0, 20, 50, 100, 150, 200, 250, 300], ['0', '20', '50', '100', '150', '200', '250', '300'])
 plt.ylim(0, 1)
-plt.title("95th percentile latency of memcached over time for the first run")
+plt.title("95th percentile latency of memcached over time for the third run")
 plt.legend(loc="upper right")
 plt.grid()
 

@@ -26,7 +26,7 @@ def comma(inputs):
 #lowerlimits = [False, True] * 5
 
 # open file with raw data, go to first line with data
-raw_data = open("raw_data_2.txt", "r")
+raw_data = open("raw_data_b.txt", "r")
 
 def find_start_of_dataset(file):
     raw_data_row = raw_data.readline()
@@ -36,13 +36,14 @@ def find_start_of_dataset(file):
 
 
 # read QPS and p95 from file, store them in arrays for all runs
-def create_data_arrays_per_run(first_row, file):
+def create_data_arrays_per_run(raw_data, file):
+    first_row = find_start_of_dataset(raw_data)
     x_data = []
     y_data = []
     while (first_row[:4] == "read"):
         raw_row_array = comma(first_row[4:])
         x_data.append(raw_row_array[15])
-        y_data.append(raw_row_array[11])
+        y_data.append(raw_row_array[11]/1000)
         first_row = file.readline()
     return (x_data, y_data)
 
@@ -71,38 +72,31 @@ def create_all_data_arrays(file):
     y_data_arrays = []
     x_error_arrays = []
     y_error_arrays = []
-    for i in range(4):
-        (x, y, x_err, y_err) = create_avg_data_arrays(raw_data)
+    for i in range(1):
+        (x, y) = create_data_arrays_per_run(raw_data, file)
         x_data_arrays.append(x)
         y_data_arrays.append(y)
-        x_error_arrays.append(x_err)
-        y_error_arrays.append(y_err)
-    return (x_data_arrays, y_data_arrays, x_error_arrays, y_error_arrays)
+    return (x_data_arrays, y_data_arrays)
 
-(x1, y1, x1_err, y1_err) = create_all_data_arrays(raw_data)
-print(x1_err[0])
-print(y1_err[0])
+(x1, y1) = create_all_data_arrays(raw_data)
 
 
 
 # Plot error bar
 plt.figure(figsize=(15, 10))
 
-plt.errorbar(x1[0], y1[0], xerr=x1_err[0], yerr=y1_err[0], label="1 thread, 1 core", capsize=2)
-plt.errorbar(x1[1], y1[1], xerr=x1_err[1], yerr=y1_err[1], label="1 thread, 2 cores", capsize=2)
-plt.errorbar(x1[2], y1[2], xerr=x1_err[2], yerr=y1_err[2], label="2 threads, 1 core", capsize=2)
-plt.errorbar(x1[3], y1[3], xerr=x1_err[3], yerr=y1_err[3], label="2 threads, 2 cores", capsize=2)
+plt.plot(x1[0], y1[0], label="1 thread, 6 core")
 
 plt.xlabel("Queries per second [QPS]")
 plt.ylabel("95th percentile latency [ms]")
-plt.xlim(0, 120000)
-plt.xticks([0, 20000, 40000, 60000, 80000, 100000, 120000], ['0', '20K', '40K', '60K', '80K', '100K', '120K'])
-plt.ylim(0, 2.5)
+plt.xlim(0, 45000)
+plt.xticks([0, 10000, 20000, 30000, 40000, 60000, 80000, 100000, 120000, 140000], ['0', '10K', '20K', '30K', '40K', '60K', '80K', '100K', '120K', '140K'])
+plt.ylim(0, 1)
 plt.title("Memcached performance for different numbers of threads and cores, each averaged across 3 runs")
 plt.legend(loc="upper left")
 plt.grid()
 
 # Display graph
 
-pylab.savefig('plot4_try2.png')
+pylab.savefig('plot4_b.png')
 plt.show()

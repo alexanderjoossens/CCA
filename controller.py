@@ -1,10 +1,62 @@
 import docker
+import json
 
 def start_controller():
     print(f'Starting controller\n')
 
-    container = client.containers.run('bfirsh/reticulate-splines',
-                                      detach=True)
+    container_fft = client.containers.run('anakli/parsec:splash2x-fft-native-reduced', 
+                                    command=["-c", "./bin/parsecmgmt -a run -p splash2x.fft -i native -n 1"],       # CHANGE n (number of threads) at beginning
+                                    cpuset_cpus="0-1",                                                              # CHANGE
+                                    detach=True,
+                                    name="parsec-fft",
+                                    remove=True)
+
+    container_freqmine = client.containers.run('anakli/parsec:freqmine-native-reduced', 
+                                    command=["-c", "./bin/parsecmgmt -a run -p freqmine -i native -n 1"],
+                                    cpuset_cpus="0-1",                                                              # CHANGE
+                                    detach=True,
+                                    name="parsec-freqmine",
+                                    remove=True)
+
+    container_ferret = client.containers.run('anakli/parsec:ferret-native-reduced', 
+                                    command=["-c", "./bin/parsecmgmt -a run -p ferret -i native -n 1"],
+                                    cpuset_cpus="0-1",                                                              # CHANGE
+                                    detach=True,
+                                    name="parsec-ferret",
+                                    remove=True)
+
+    container_canneal = client.containers.run('anakli/parsec:canneal-native-reduced', 
+                                    command=["-c", "./bin/parsecmgmt -a run -p canneal -i native -n 1"],
+                                    cpuset_cpus="0-1",                                                              # CHANGE
+                                    detach=True,
+                                    name="parsec-canneal",
+                                    remove=True)
+
+    container_dedup = client.containers.run('anakli/parsec:dedup-native-reduced', 
+                                    command=["-c", "./bin/parsecmgmt -a run -p dedup -i native -n 1"],
+                                    cpuset_cpus="0-1",                                                              # CHANGE
+                                    detach=True,
+                                    name="parsec-dedup",
+                                    remove=True)
+
+    container_blackscholes = client.containers.run('anakli/parsec:blackscholes-native-reduced', 
+                                    command=["-c", "./bin/parsecmgmt -a run -p blackscholes -i native -n 1"],
+                                    cpuset_cpus="0-1",                                                              # CHANGE
+                                    detach=True,
+                                    name="parsec-blackscholes",
+                                    remove=True)
+
+
+    stats_fft = container_fft.stats(decode=True)
+    with open('stats_fft.txt', 'w') as stats_file:
+        stats_file.write(json.dumps(stats_fft))
+
+    container_fft.update(cpuset_cpus="0")
+
+
+
+
+
 
     #list and manage containers
     for container in client.containers.list():
@@ -35,6 +87,6 @@ def start_controller():
 if __name__ == '__main__':
 
     client = docker.from_env()
-    client.containers.run('alpine', 'echo hello world')
+    #client.containers.run('alpine', 'echo hello world')
     start_controller()
 

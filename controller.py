@@ -5,10 +5,21 @@ def start_controller():
 
     container = client.containers.run('bfirsh/reticulate-splines',
                                       detach=True)
-    container.logs()
+
+    #list and manage containers
+    for container in client.containers.list():
+        print(container.id)
 
     #create containers
     client.containers.create()
+
+    # stop all running containers
+    for container in client.containers.list():
+        container.stop()
+
+    #print the logs of a specific container
+    container = client.containers.get('f1064a8a4c82')
+    print(container.logs())
 
     # to see CPU usage use
     # bash command:

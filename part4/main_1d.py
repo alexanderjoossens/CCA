@@ -41,7 +41,7 @@ def create_data_arrays_per_run(first_row, file):
     y_data = []
     while (first_row[:4] == "read"):
         raw_row_array = comma(first_row[4:])
-        x_data.append(raw_row_array[-2])
+        x_data.append(raw_row_array[15])
         y_data.append(raw_row_array[11])
         first_row = file.readline()
     return (x_data, y_data)
@@ -53,7 +53,7 @@ def create_avg_data_arrays(file):
     x_data = []
     y_data = []
     for i in range(len(run1[0])):
-        x_data.append((run1[0][i] - run1[0][0]) / 1000)
+        x_data.append(run1[0][i])
         y_data.append((run1[1][i]) / 1000)
     return (x_data, y_data)
 
@@ -80,7 +80,7 @@ def create_all_cpu_arrays(file):
     while (raw_data_row[:3] == "165"):
         raw_row_array = comma(raw_data_row)
         if (int(raw_row_array[0]) > 1 and int(raw_row_array[1]) > 1 and int(raw_row_array[2]) > 1 and int(raw_row_array[3]) > 1):
-            x_data.append(int(raw_row_array[0] - x_min))
+            x_data.append((int(raw_row_array[0] - x_min)) * 120000/160)
             y_data.append(raw_row_array[2])
         raw_data_row = file.readline()
     print(len(x_data))
@@ -99,7 +99,7 @@ def create_all_cpu_arrays_2(file):
     while (raw_data_row[:3] == "165"):
         raw_row_array = comma(raw_data_row)
         if (int(raw_row_array[1]) > 1 and int(raw_row_array[2]) > 1 and int(raw_row_array[3]) > 1 and int(raw_row_array[4]) > 1):
-            x_data.append(int(raw_row_array[0] - x_min))
+            x_data.append((int(raw_row_array[0] - x_min)) * 120000/160)
             y_data.append(raw_row_array[2] + raw_row_array[3])
         raw_data_row = file.readline()
     print(len(x_data))
@@ -109,6 +109,7 @@ def create_all_cpu_arrays_2(file):
 print("start program")
 (x2, y2) = create_all_cpu_arrays(raw_data)
 (x1, y1) = create_all_data_arrays(raw_data)
+print(y1)
 (x2_2, y2_2) = create_all_cpu_arrays_2(raw_data)
 (x1_2, y1_2) = create_all_data_arrays(raw_data)
 
@@ -120,13 +121,13 @@ fig, ax = plt.subplots()
 
 plt.plot(x1[0], y1[0], label="latency [ms]", color="blue")
 
-plt.xlabel("Time [s]")
+plt.xlabel("Queries per second [QPS]")
 plt.ylabel("95th percentile latency [ms]")
-plt.xlim(0, 160)
 plt.yticks(color="blue")
-plt.xticks([0, 50, 100, 150], ['0', '50', '100', '150'])
+plt.xlim(0, 130000)
+plt.xticks([0, 20000, 40000, 60000, 80000, 100000, 120000], ['0', '20K', '40K', '60K', '80K', '100K', '120K'])
 plt.ylim(0, 2)
-plt.title("Memcached performance for 2 threads and 1 core over time")
+plt.title("Memcached performance for 2 threads and 1 core")
 #plt.legend(loc="upper left")
 plt.grid()
 
@@ -147,13 +148,13 @@ fig, ax = plt.subplots()
 
 plt.plot(x1_2[0], y1_2[0], label="latency [ms]", color="blue")
 
-plt.xlabel("Time [s]")
+plt.xlabel("Queries per second [QPS]")
 plt.ylabel("95th percentile latency [ms]")
-plt.xlim(0, 160)
 plt.yticks(color="blue")
-plt.xticks([0, 50, 100, 150], ['0', '50', '100', '150'])
+plt.xlim(0, 130000)
+plt.xticks([0, 20000, 40000, 60000, 80000, 100000, 120000], ['0', '20K', '40K', '60K', '80K', '100K', '120K'])
 plt.ylim(0, 2)
-plt.title("Memcached performance for 2 threads and 2 cores over time")
+plt.title("Memcached performance for 2 threads and 2 cores")
 #plt.legend(loc="upper left")
 plt.grid()
 

@@ -86,11 +86,30 @@ def create_all_cpu_arrays(file):
     print(len(x_data))
     print(x_data)
     return (x_data, y_data)
+    
+def create_all_cpu_arrays_2(file):
+    raw_data_row = raw_data.readline()
+    while (raw_data_row[0:3] != "165"):
+        raw_data_row = file.readline()
+    x_data = []
+    y_data = []
+    raw_row_array = comma(raw_data_row)
+    x_min = raw_row_array[0]
+    print(x_min)
+    while (raw_data_row[:3] == "165"):
+        raw_row_array = comma(raw_data_row)
+        if (int(raw_row_array[1]) > 1 and int(raw_row_array[2]) > 1 and int(raw_row_array[3]) > 1 and int(raw_row_array[4]) > 1):
+            x_data.append(int(raw_row_array[0] - x_min))
+            y_data.append(raw_row_array[2] + raw_row_array[3])
+        raw_data_row = file.readline()
+    print(len(x_data))
+    print(x_data)
+    return (x_data, y_data)
 
 print("start program")
 (x2, y2) = create_all_cpu_arrays(raw_data)
 (x1, y1) = create_all_data_arrays(raw_data)
-(x2_2, y2_2) = create_all_cpu_arrays(raw_data)
+(x2_2, y2_2) = create_all_cpu_arrays_2(raw_data)
 (x1_2, y1_2) = create_all_data_arrays(raw_data)
 
 

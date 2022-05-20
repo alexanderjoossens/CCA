@@ -95,7 +95,7 @@ plt.errorbar(x1[3], y1[3], xerr=x1_err[3], yerr=y1_err[3], label="2 threads, 2 c
 
 plt.xlabel("Queries per second [QPS]")
 plt.ylabel("95th percentile latency [ms]")
-plt.xlim(0, 120000)
+plt.xlim(0, 130000)
 plt.xticks([0, 20000, 40000, 60000, 80000, 100000, 120000], ['0', '20K', '40K', '60K', '80K', '100K', '120K'])
 plt.ylim(0, 2.5)
 plt.title("Memcached performance for different numbers of threads and cores, each averaged across 3 runs")

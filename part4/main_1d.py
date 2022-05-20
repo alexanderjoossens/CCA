@@ -106,7 +106,7 @@ plt.ylabel("95th percentile latency [ms]")
 plt.xlim(0, 160)
 plt.yticks(color="blue")
 plt.xticks([0, 50, 100, 150], ['0', '50', '100', '150'])
-plt.ylim(0, 2.5)
+plt.ylim(0, 2)
 plt.title("Memcached performance for 2 threads and 1 core over time")
 #plt.legend(loc="upper left")
 plt.grid()
@@ -115,6 +115,7 @@ ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
 ax2.set_ylabel('CPU usage [%]')  # we already handled the x-label with ax1
 ax2.plot(x2, y2, color="red", label="CPU usage [%]")
 ax2.tick_params(axis='y', labelcolor="red")
+ax2.set_ylim([0, 100])
 
 # Display graph
 
@@ -132,8 +133,8 @@ plt.ylabel("95th percentile latency [ms]")
 plt.xlim(0, 160)
 plt.yticks(color="blue")
 plt.xticks([0, 50, 100, 150], ['0', '50', '100', '150'])
-plt.ylim(0, 2.5)
-plt.title("Memcached performance for 2 threads and 1 core over time")
+plt.ylim(0, 2)
+plt.title("Memcached performance for 2 threads and 2 cores over time")
 #plt.legend(loc="upper left")
 plt.grid()
 
@@ -141,6 +142,7 @@ ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
 ax2.set_ylabel('CPU usage [%]')  # we already handled the x-label with ax1
 ax2.plot(x2_2, y2_2, color="red", label="CPU usage [%]")
 ax2.tick_params(axis='y', labelcolor="red")
+ax2.set_ylim([0, 200])
 
 # Display graph
 

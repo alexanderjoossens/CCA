@@ -128,13 +128,14 @@ plt.xlim(0, 130000)
 plt.xticks([0, 20000, 40000, 60000, 80000, 100000, 120000], ['0', '20K', '40K', '60K', '80K', '100K', '120K'])
 plt.ylim(0, 2)
 plt.title("Memcached performance for 2 threads and 1 core")
+plt.axhline(y=1.5, linestyle='dotted', color="red")
 #plt.legend(loc="upper left")
 plt.grid()
 
 ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
 ax2.set_ylabel('CPU usage [%]')  # we already handled the x-label with ax1
-ax2.plot(x2, y2, color="red", label="CPU usage [%]")
-ax2.tick_params(axis='y', labelcolor="red")
+ax2.plot(x2, y2, color="green", label="CPU usage [%]")
+ax2.tick_params(axis='y', labelcolor="green")
 ax2.set_ylim([0, 100])
 
 # Display graph
@@ -155,13 +156,14 @@ plt.xlim(0, 130000)
 plt.xticks([0, 20000, 40000, 60000, 80000, 100000, 120000], ['0', '20K', '40K', '60K', '80K', '100K', '120K'])
 plt.ylim(0, 2)
 plt.title("Memcached performance for 2 threads and 2 cores")
+plt.axhline(y=1.5, linestyle='dotted', color="red")
 #plt.legend(loc="upper left")
 plt.grid()
 
 ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
 ax2.set_ylabel('CPU usage [%]')  # we already handled the x-label with ax1
-ax2.plot(x2_2, y2_2, color="red", label="CPU usage [%]")
-ax2.tick_params(axis='y', labelcolor="red")
+ax2.plot(x2_2, y2_2, color="green", label="CPU usage [%]")
+ax2.tick_params(axis='y', labelcolor="green")
 ax2.set_ylim([0, 200])
 
 # Display graph

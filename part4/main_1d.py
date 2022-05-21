@@ -94,11 +94,14 @@ def create_all_cpu_arrays(file, qps, start, end):
     y_data.append(0)
     while (raw_data_row[:3] == "165"):
         raw_row_array = comma(raw_data_row)
+        print(raw_row_array[0] * 1000)
+        print(start[i])
         if (raw_row_array[0] * 1000 > start[i] and raw_row_array[0] * 1000 < end[i]):
             y_data[i] += raw_row_array[2]
             n_values += 1
         else:
-            y_data[i] /= n_values
+            if (n_values > 0):
+                y_data[i] /= n_values
             i += 1
             y_data.append(0)
         #if (int(raw_row_array[0]) > 1 and int(raw_row_array[1]) > 1 and int(raw_row_array[2]) > 1 and int(raw_row_array[3]) > 1):
@@ -129,12 +132,12 @@ def create_all_cpu_arrays_2(file, qps, start, end):
     return (x_data, y_data)
 
 print("start program")
-(x1, y1, time_start1, time_end1) = create_all_data_arrays(raw_data)
+(x1, y1, time_start1, time_end1) = create_avg_data_arrays(raw_data)
 (x2, y2) = create_all_cpu_arrays(raw_data, x1, time_start1, time_end1)
 print(y1)
-(x1_2, y1_2, time_start2, time_end2) = create_all_data_arrays(raw_data)
+(x1_2, y1_2, time_start2, time_end2) = create_avg_data_arrays(raw_data)
 (x2_2, y2_2) = create_all_cpu_arrays_2(raw_data, x1_2, time_start2, time_end2)
-
+print(y2)
 
 
 # Plot error bar

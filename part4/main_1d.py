@@ -39,12 +39,16 @@ def find_start_of_dataset(file):
 def create_data_arrays_per_run(first_row, file):
     x_data = []
     y_data = []
+    time_start = []
+    time_end = []
     while (first_row[:4] == "read"):
         raw_row_array = comma(first_row[4:])
         x_data.append(raw_row_array[15])
         y_data.append(raw_row_array[11])
+        time_start.append(raw_row_array[-2])
+        time_end.append(raw_row_array[-1])
         first_row = file.readline()
-    return (x_data, y_data)
+    return (x_data, y_data, time_start, time_end)
 
 # average data across 3 runs
 def create_avg_data_arrays(file):
@@ -52,23 +56,31 @@ def create_avg_data_arrays(file):
     run1 = create_data_arrays_per_run(raw_data_row, file)
     x_data = []
     y_data = []
+    time_start = []
+    time_end = []
     for i in range(len(run1[0])):
         x_data.append(run1[0][i])
         y_data.append((run1[1][i]) / 1000)
-    return (x_data, y_data)
+        time_start.append(run1[2][i])
+        time_end.append(run1[3][i])
+    return (x_data, y_data, time_start, time_end)
 
 # get data from raw data for each benchmark
 def create_all_data_arrays(file):
     print("create_all_data_arrays")
     x_data_arrays = []
     y_data_arrays = []
+    time_start_arrays = []
+    time_end_arrays = []
     for i in range(1):
-        (x, y) = create_avg_data_arrays(raw_data)
+        (x, y, time_start, time_end) = create_avg_data_arrays(raw_data)
         x_data_arrays.append(x)
         y_data_arrays.append(y)
-    return (x_data_arrays, y_data_arrays)
+        time_start_arrays.append(time_start)
+        time_end_arrays.append(time_end)
+    return (x_data_arrays, y_data_arrays, time_start_arrays, time_end_arrays)
 
-def create_all_cpu_arrays(file):
+def create_all_cpu_arrays(file, qps, start, end):
     raw_data_row = raw_data.readline()
     while (raw_data_row[0:3] != "165"):
         raw_data_row = file.readline()
@@ -77,17 +89,27 @@ def create_all_cpu_arrays(file):
     raw_row_array = comma(raw_data_row)
     x_min = raw_row_array[0]
     print(x_min)
+    i = 0
+    n_values = 0
+    y_data.append(0)
     while (raw_data_row[:3] == "165"):
         raw_row_array = comma(raw_data_row)
-        if (int(raw_row_array[0]) > 1 and int(raw_row_array[1]) > 1 and int(raw_row_array[2]) > 1 and int(raw_row_array[3]) > 1):
-            x_data.append((int(raw_row_array[0] - x_min)) * 120000/160)
-            y_data.append(raw_row_array[2])
+        if (raw_row_array[0] * 1000 > start[i] and raw_row_array[0] * 1000 < end[i]):
+            y_data[i] += raw_row_array[2]
+            n_values += 1
+        else:
+            y_data[i] /= n_values
+            i += 1
+            y_data.append(0)
+        #if (int(raw_row_array[0]) > 1 and int(raw_row_array[1]) > 1 and int(raw_row_array[2]) > 1 and int(raw_row_array[3]) > 1):
+        #x_data.append((int(raw_row_array[0] - x_min)) * 120000/160)
+        #y_data.append(raw_row_array[2])
         raw_data_row = file.readline()
-    print(len(x_data))
-    print(x_data)
+    print(len(y_data))
+    print(y_data)
     return (x_data, y_data)
     
-def create_all_cpu_arrays_2(file):
+def create_all_cpu_arrays_2(file, qps, start, end):
     raw_data_row = raw_data.readline()
     while (raw_data_row[0:3] != "165"):
         raw_data_row = file.readline()
@@ -98,20 +120,20 @@ def create_all_cpu_arrays_2(file):
     print(x_min)
     while (raw_data_row[:3] == "165"):
         raw_row_array = comma(raw_data_row)
-        if (int(raw_row_array[1]) > 1 and int(raw_row_array[2]) > 1 and int(raw_row_array[3]) > 1 and int(raw_row_array[4]) > 1):
-            x_data.append((int(raw_row_array[0] - x_min)) * 120000/160)
-            y_data.append(raw_row_array[2] + raw_row_array[3])
+        #if (int(raw_row_array[1]) > 1 and int(raw_row_array[2]) > 1 and int(raw_row_array[3]) > 1 and int(raw_row_array[4]) > 1):
+        x_data.append((int(raw_row_array[0] - x_min)) * 120000/160)
+        y_data.append(raw_row_array[2] + raw_row_array[3])
         raw_data_row = file.readline()
     print(len(x_data))
     print(x_data)
     return (x_data, y_data)
 
 print("start program")
-(x2, y2) = create_all_cpu_arrays(raw_data)
-(x1, y1) = create_all_data_arrays(raw_data)
+(x1, y1, time_start1, time_end1) = create_all_data_arrays(raw_data)
+(x2, y2) = create_all_cpu_arrays(raw_data, x1, time_start1, time_end1)
 print(y1)
-(x2_2, y2_2) = create_all_cpu_arrays_2(raw_data)
-(x1_2, y1_2) = create_all_data_arrays(raw_data)
+(x1_2, y1_2, time_start2, time_end2) = create_all_data_arrays(raw_data)
+(x2_2, y2_2) = create_all_cpu_arrays_2(raw_data, x1_2, time_start2, time_end2)
 
 
 
@@ -135,7 +157,7 @@ plt.grid()
 
 ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
 ax2.set_ylabel('CPU usage [%]')  # we already handled the x-label with ax1
-ax2.plot(x2, y2, color="green", label="CPU usage [%]")
+ax2.plot(x1, y2, color="green", label="CPU usage [%]")
 ax2.tick_params(axis='y', labelcolor="green")
 ax2.set_ylim([0, 100])
 
@@ -168,7 +190,7 @@ plt.grid()
 
 ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
 ax2.set_ylabel('CPU usage [%]')  # we already handled the x-label with ax1
-ax2.plot(x2_2, y2_2, color="green", label="CPU usage [%]")
+ax2.plot(x1_2, y2_2, color="green", label="CPU usage [%]")
 ax2.tick_params(axis='y', labelcolor="green")
 ax2.set_ylim([0, 200])
 

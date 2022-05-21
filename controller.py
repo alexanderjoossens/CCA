@@ -4,9 +4,11 @@ import json
 import time
 import os
 
+
 def start_controller():
     print('Starting controller')
     os.system("sudo usermod -a -G docker ubuntu")
+    container_blackscholes = os.system('docker run --cpuset-cpus="0" -d --rm --name parsec anakli/parsec:blackscholes-native-reduced ./bin/parsecmgmt -a run -p blackscholes -i native -n 2')
 
     container_fft = client.containers.create('anakli/parsec:splash2x-fft-native-reduced', 
                                     command="./bin/parsecmgmt -a run -p splash2x.fft -i native -n 1",
@@ -42,20 +44,20 @@ def start_controller():
                                     detach=True,
                                     name="parsec-dedup",
                                     )
-    container_blackscholes = client.containers.create('anakli/parsec:blackscholes-native-reduced', 
-                                    command="./bin/parsecmgmt -a run -p blackscholes -i native -n 2",
-                                    cpuset_cpus="2-3",
-                                    detach=True,
-                                    name="parsec-blackscholes",
-                                    )
+    #container_blackscholes = client.containers.create('anakli/parsec:blackscholes-native-reduced', 
+                                    #command="./bin/parsecmgmt -a run -p blackscholes -i native -n 2",
+                                    #cpuset_cpus="2-3",
+                                    #detach=True,
+                                    #name="parsec-blackscholes",
+                                    #)
 
 
     print("create containers done")
     start_time = time.time()
     print(start_time)
-    highprio_task_list = [container_blackscholes, container_ferret, container_freqmine]
+    highprio_task_list = [container_ferret, container_freqmine]
     lowprio_task_list = [container_fft, container_canneal, container_dedup]
-    highprio_task = highprio_task_list.pop(0)
+    highprio_task = container_blackscholes
     lowprio_task = lowprio_task_list.pop(0)
     low_limit = 50
     high_limit = 60
@@ -69,7 +71,7 @@ def start_controller():
 
     print(memcached_pid)
     print(highprio_task.status)
-    highprio_task.start()
+    #highprio_task.start()
     start_highprio_task = time.time()
     print("STARTED: " + highprio_task.name + " at " + str(start_highprio_task) + "["+ highprio_task.status + "]")
 

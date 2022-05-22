@@ -8,11 +8,11 @@ def start_fft():
     return client.containers.get(str(container_fft)[:12])
 
 def start_freqmine():
-    container_freqmine = os.popen('docker run --cpuset-cpus="2-3" -d --name parsec-freqmine anakli/parsec:freqmine-native-reduced ./bin/parsecmgmt -a run -p freqmine -i native -n 2').read()
+    container_freqmine = os.popen('docker run --cpuset-cpus="2-3" -d --name parsec-freqmine anakli/parsec:freqmine-native-reduced ./bin/parsecmgmt -a run -p freqmine -i native -n 3').read()
     return client.containers.get(str(container_freqmine)[:12])
 
 def start_ferret():
-    container_ferret = os.popen('docker run --cpuset-cpus="2-3" -d --name parsec-ferret anakli/parsec:ferret-native-reduced ./bin/parsecmgmt -a run -p ferret -i native -n 2').read()
+    container_ferret = os.popen('docker run --cpuset-cpus="2-3" -d --name parsec-ferret anakli/parsec:ferret-native-reduced ./bin/parsecmgmt -a run -p ferret -i native -n 3').read()
     return client.containers.get(str(container_ferret)[:12])
 
 def start_canneal():
@@ -38,11 +38,11 @@ def start_controller():
 
     highprio_task = start_blackscholes()
     start_highprio_task = time.time()
-    print("STARTED: " + highprio_task.name + " at " + str(start_highprio_task) + "["+ highprio_task.status + "]")
+    print("STARTED: " + highprio_task.name + " " + str(start_highprio_task))
 
     lowprio_task = start_fft()
     start_lowprio_task = time.time()
-    print("STARTED: " + lowprio_task.name + " at " + str(start_lowprio_task))
+    print("STARTED: " + lowprio_task.name + " " + str(start_lowprio_task))
 
     counter_time = time.time()
 
@@ -60,6 +60,9 @@ def start_controller():
     os.system("docker inspect -f '{{.State.Status}}' " + highprio_task.name)
     print(highprio_task.status)
 
+    high_list_finished = 0
+    low_list_finished = 0
+
     while True:
         (cpu0, cpu1, cpu2, cpu3) = psutil.cpu_percent(interval=0.1, percpu=True)
         highprio_state = os.popen("docker inspect -f '{{.State.Status}}' " + highprio_task.name).read()
@@ -74,15 +77,18 @@ def start_controller():
         if (highprio_state[:7] == "running"):
             pass
 
-        elif (highprio_state[:6] == "exited"):
+        elif (highprio_state[:6] == "exited" and high_list_finished == 0):
             try:
                 high_stop_time = time.time()
                 high_duration = high_stop_time - start_highprio_task
-                print("EXITED: " + highprio_task.name + " after " + str(high_duration) + " time, started at: " + str(start_highprio_task))
+                print("EXITED: " + highprio_task.name + " " + str(high_duration) + " " + str(start_highprio_task))
                 highprio_task = highprio_task_list.pop(0)()
+                if (low_list_finished == 1):
+                    os.system("docker update --cpuset-cpus 1-3 " + highprio_task.id)
                 start_highprio_task = time.time()
-                print("STARTED: " + highprio_task.name + " at " + str(start_highprio_task))
+                print("STARTED: " + highprio_task.name + " " + str(start_highprio_task))
             except:
+                high_list_finished = 1
                 print("High exception at exit")
 
         elif (highprio_state == "created"):
@@ -102,16 +108,18 @@ def start_controller():
         if (lowprio_state[:7] == "running"):
             pass
 
-        elif (lowprio_state[:6] == "exited"):
+        elif (lowprio_state[:6] == "exited" and low_list_finished == 0):
             try:
                 low_stop_time = time.time()
                 low_duration = low_stop_time - start_lowprio_task
-                print("EXITED: " + lowprio_task.name + " after " + str(low_duration) + " time, started at: " + str(start_lowprio_task))
+                print("EXITED: " + lowprio_task.name + " " + str(low_duration) + " " + str(start_lowprio_task))
                 lowprio_task = lowprio_task_list.pop(0)()
                 start_lowprio_task = time.time()
-                print("STARTED: " + lowprio_task.name + " at " + str(start_lowprio_task))
+                print("STARTED: " + lowprio_task.name + " " + str(start_lowprio_task))
             except:
+                low_list_finished = 1
                 print("Low exception at exit")
+                os.system("docker update --cpuset-cpus 1-3 " + highprio_task.id)
 
         elif (lowprio_state[:7] == "created"):
             pass
@@ -125,13 +133,38 @@ def start_controller():
         elif (lowprio_state[:4] == "dead"):
             print("Container DEAD: " + lowprio_task.name)
 
-        if ((cpu0 > 80) and (memcached_state == 0)):
+
+        if (cpu0 > 90):
+            if (low_list_finished == 0):
+                os.system("docker pause " + lowprio_task.id + " >/dev/null 2>&1")
+                print("PAUSED: " + lowprio_task.name + " " + str(time.time()))
+            else:
+                os.system("docker update --cpuset-cpus 2-3 " + highprio_task.id)
+                print("UPDATE: 2-3cores" + highprio_task.name + " " + str(time.time() - start_time))
+        elif (cpu0 + cpu1 < 75):
+            if (low_list_finished == 0):
+                os.system("docker unpause " + lowprio_task.id + " >/dev/null 2>&1")
+                print("UNPAUSED: " + lowprio_task.name + " " + str(time.time()))
+            else:
+                os.system("docker update --cpuset-cpus 1-3 " + highprio_task.id)
+                print("UPDATE: 1-3cores" + highprio_task.name + " " + str(time.time() - start_time))
+
+
+        if ((cpu0 > 60) and (memcached_state == 0)):
             os.system("taskset -a -cp 0-1 " + str(memcached_pid) + " >/dev/null 2>&1")
-            print("MEMCACHED: number of cores changed to 2 at " + str(time.time()))
+            if (low_list_finished == 0):
+                os.system("docker update --cpu-shares 512 " + lowprio_task.id)
+            else:
+                os.system("docker update --cpu-shares 512 " + highprio_task.id)
+            print("MEMCACHED: 2 " + str(time.time()))
             memcached_state = 1
         elif ((cpu0 < 30) and (memcached_state == 1)):
             os.system("taskset -a -cp 0 " + str(memcached_pid) + " >/dev/null 2>&1")
-            print("MEMCACHED: number of cores changed to 1 at " + str(time.time()))
+            if (low_list_finished == 0):
+                os.system("docker update --cpu-shares 1024 " + lowprio_task.id)
+            else:
+                os.system("docker update --cpu-shares 1024 " + highprio_task.id)
+            print("MEMCACHED: 1 " + str(time.time()))
             memcached_state = 0
 
 

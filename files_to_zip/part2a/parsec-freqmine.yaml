@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: parsec-freqmine
+  labels:
+    name: pasec-freqmine
+spec:
+  template:
+    spec:
+      containers:
+      - image: anakli/parsec:freqmine-native-reduced
+        name: parsecfreqmine
+        imagePullPolicy: Always
+        command: ["/bin/sh"]
+        args: ["-c", "./bin/parsecmgmt -a run -p freqmine -i native -n 4"]
+        resources:
+          requests:
+            cpu: "2"
+      restartPolicy: Never
+      nodeSelector:
+        cca-project-nodetype: "node-c-8core"

@@ -31,7 +31,7 @@ def comma_str(inputs):
 #lowerlimits = [False, True] * 5
 
 # open file with raw data, go to first line with data
-raw_data = open("raw_data_4_4_3.txt", "r")
+raw_data = open("raw_data_4_4_1.txt", "r")
 
 def find_start_of_dataset(file, start_str):
     raw_data_row = raw_data.readline()
@@ -63,7 +63,7 @@ def create_avg_data_arrays(file):
     y_data = []
     z_data = []
     for i in range(len(run1[1])):
-        x_data.append(10*i)
+        x_data.append(2*i)
         y_data.append((run1[1][i]) / 1000)
         z_data.append(run1[2][i])
     return (x_data, y_data, z_data)
@@ -186,15 +186,15 @@ total_end_time = int(comma_str(find_start_of_dataset(raw_data, "Timestamp end"))
 starting_times = find_times(raw_data, total_start_time/1000, "STARTED:")
 
 raw_data.close()
-raw_data = open("raw_data_4_4_3.txt", "r")
+raw_data = open("raw_data_4_4_1.txt", "r")
 paused_times = find_pause_times(raw_data, total_start_time/1000, "PAUSED:")
 raw_data.close()
-raw_data = open("raw_data_4_4_3.txt", "r")
+raw_data = open("raw_data_4_4_1.txt", "r")
 unpaused_times = find_pause_times(raw_data, total_start_time/1000, "UNPAUSED:")
 #(x1_2, y1_2, z1_2) = create_all_data_arrays(raw_data)
 
 raw_data.close()
-raw_data = open("raw_data_4_4_3.txt", "r")
+raw_data = open("raw_data_4_4_1.txt", "r")
 memcached_cores = find_memcached_times(raw_data, total_start_time/1000, "MEMCACHED:")
 
 # compute execution times
@@ -281,7 +281,7 @@ plt.xlim(0, 1800)
 plt.xticks([0, 500, 1000, 1500, 1800], 
             ['0', '500', '1000', '1500', '1800'])
 plt.ylim(0, 2.5)
-plt.title("3A: Memcached performance over time using 2 second intervals")
+plt.title("1A: Memcached performance over time using 2 second intervals")
 plt.axhline(y=1.5, linestyle='dotted', color="red")
 plt.text(1470, 1.52, "Latency SLO")
 
@@ -319,7 +319,7 @@ fig.set_tight_layout(True)
 
 # Display graph
 
-pylab.savefig('plot4_4_3A.png')
+pylab.savefig('plot4_4_1A.png')
 #plt.show()
 
 
@@ -338,7 +338,7 @@ plt.xlim(0, 1800)
 plt.xticks([0, 500, 1000, 1500, 1800], 
             ['0', '500', '1000', '1500', '1800'])
 plt.ylim(0, 2.5)
-plt.title("3B: Memcached performance over time using 2 second intervals")
+plt.title("1B: Memcached performance over time using 2 second intervals")
 
 colors = {
             "parsec-fft": "goldenrod", 
@@ -373,5 +373,5 @@ fig.set_tight_layout(True)
 
 # Display graph
 
-pylab.savefig('plot4_4_3B.png')
+pylab.savefig('plot4_4_1B.png')
 #plt.show()

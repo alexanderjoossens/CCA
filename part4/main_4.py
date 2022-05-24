@@ -163,6 +163,18 @@ def find_start_of_jobs(file, line_str):
     starting_time = float(starting_array[2])
     return starting_time
 
+def find_violations(file, line_str):
+    first_row = find_start_of_dataset(file, line_str)
+    violations = 0
+    total = 0
+    while (first_row[:4] == "read"):
+        raw_row_array = comma(first_row[4:])
+        if (raw_row_array[11] > 1500):
+            violations += 1
+        total += 1
+        first_row = file.readline()
+    return float(violations)/float(total)
+
 
 
 print("start program")
@@ -234,7 +246,25 @@ print("canneal: \t" + str(canneal_avg) + "\t" + str(canneal_error))
 print("blackscholes: \t" + str(blackscholes_avg) + "\t" + str(blackscholes_error))
 print("memcached: \t" + str(memcached_avg) + "\t" + str(memcached_error))
 
+# compute SLO violation rate
+raw_data.close()
+raw_data = open("raw_data_4_4_1.txt", "r")
+violations1 = find_violations(raw_data, "read")
+raw_data.close()
+raw_data = open("raw_data_4_4_2.txt", "r")
+violations2 = find_violations(raw_data, "read")
+raw_data.close()
+raw_data = open("raw_data_4_4_3.txt", "r")
+violations3 = find_violations(raw_data, "read")
 
+print("Violations run 1: " + str(violations1))
+print("Violations run 2: " + str(violations2))
+print("Violations run 3: " + str(violations3))
+
+raw_data.close()
+raw_data = open("raw_data_4_4_5s.txt", "r")
+violations5 = find_violations(raw_data, "read")
+print("Violations for 5s interval: " + str(violations5))
 
 
 

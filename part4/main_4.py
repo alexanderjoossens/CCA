@@ -320,7 +320,7 @@ fig.set_tight_layout(True)
 # Display graph
 
 pylab.savefig('plot4_4_1A.png')
-#plt.show()
+plt.show()
 
 
 

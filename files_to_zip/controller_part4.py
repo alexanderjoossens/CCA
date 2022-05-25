@@ -118,12 +118,12 @@ def start_controller():
 
 
 
-        if (lowprio_state[:7] == "running"):
-            pass
-
         # Decide on lowpriority task's state
         # If state has changed to exited: start next job if available
         # If no lowpriority job is available, assign core 1 (which is no longer running lowpriority tasks) to the current highpriority task
+        if (lowprio_state[:7] == "running"):
+            pass
+
         elif (lowprio_state[:6] == "exited" and low_list_finished == 0):
             try:
                 low_stop_time = time.time()
